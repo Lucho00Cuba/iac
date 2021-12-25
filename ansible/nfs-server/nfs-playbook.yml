@@ -1,0 +1,34 @@
+---
+- hosts: nfs
+  tasks:
+    - name: REPO CHANGE
+      shell: wget https://gist.githubusercontent.com/Lucho00Cuba/0c44c4a2c283a1ffa2c135117bdfa352/raw/adbb3011f90c8e81a5eb20ec5f321d46ea47afc7/sources.list && mv sources.list /etc/apt/sources.list
+    - name: INSTALL NFS TOOLS
+      apt:
+       pkg:
+        - nfs-kernel-server
+        - nfs-common
+       update_cache: yes
+    - name: CREATE RESOURCE
+      file:
+        path: /nfs
+        state: directory
+        owner: root
+        group: root
+        mode: '0775'
+    - name: ENABLE NFS
+      service:
+        name: "{{ item }}"
+        enabled: yes
+      with_items:
+        - rpcbind
+        - nfs-server
+    - name: EXPORTS FILE
+      template:
+        src: ./nfs-config.j2
+        dest: /etc/exports
+        owner: root
+        group: root
+        mode: 0644
+    - name: NFS CONFIGURE
+      shell: systemctl reload nfs;exportfs -a

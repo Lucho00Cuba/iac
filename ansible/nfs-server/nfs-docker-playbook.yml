@@ -1,0 +1,40 @@
+---
+
+- hosts: nfs
+  tasks:
+  - name: REPO CHANGE
+    shell: wget https://gist.githubusercontent.com/Lucho00Cuba/0c44c4a2c283a1ffa2c135117bdfa352/raw/adbb3011f90c8e81a5eb20ec5f321d46ea47afc7/sources.list && mv sources.list /etc/apt/sources.list
+  - name: INSTALL DEPENDENCIES
+    apt:
+     pkg:
+      - curl
+      - gpg
+      - gnupg-agent
+      - software-properties-common
+     update_cache: yes
+  - name: KEY REPO DOCKER
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+  - name: REPO DOCKER
+    apt_repository:
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu groovy stable
+      state: present
+  - name: INSTALL DOCKER
+    apt:
+     pkg: 
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+  - name: COMPOSE FILE
+    template:
+      src: ./docker-compose.yml
+      dest: /root/
+      owner: root
+      group: root
+      mode: 0644
+  - name: INSTALL DOCKER COMPOSE
+    shell: curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/bin/docker-compose && chmod +x /usr/bin/docker-compose
+  - name: SERVICE UP
+    shell: docker-compose up -d
+      

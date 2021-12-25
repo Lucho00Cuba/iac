@@ -1,0 +1,39 @@
+---
+
+- hosts: docker
+  tasks:
+  - name: REPO CHANGE
+    shell: wget https://gist.githubusercontent.com/Lucho00Cuba/0c44c4a2c283a1ffa2c135117bdfa352/raw/adbb3011f90c8e81a5eb20ec5f321d46ea47afc7/sources.list && mv sources.list /etc/apt/sources.list
+  - name: INSTALL DEPENDENCIES
+    apt:
+     pkg:
+      - curl
+      - gpg
+      - gnupg-agent
+      - software-properties-common
+     update_cache: yes
+  - name: KEY REPO DOCKER
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+  - name: REPO DOCKER
+    apt_repository:
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu groovy stable
+      state: present
+  - name: INSTALL DOCKER
+    apt:
+     pkg: 
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+#  - name: DOCKER STATE
+#    shell: systemctl status "{{ item }}"
+#    with_items:
+#    - docker
+#    register: result
+#  - name: REPORT
+#    debug:
+#      var: result
+    
+      
+      
