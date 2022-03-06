@@ -1,0 +1,21 @@
+---
+- hosts: general
+  tasks:
+    # Conditionals Ansible
+    - name: Run the command if "foo" is defined
+      ansible.builtin.shell: echo "I've got '{{ foo }}' and am not afraid to use it!"
+      when: "foo is defined"
+    
+    - name: Fail if "bar" is undefined
+      ansible.builtin.fail: msg="Bailing out. This play requires 'bar'"
+      when: "bar is undefined"
+ 
+    - name: Set a variable if not defined
+      ansible.builtin.set_fact:
+        x: foo
+      when: x is not defined
+
+    - name: Do the task if "x" is not defined
+      ansible.builtin.debug:
+        var: x
+      when: x is not defined

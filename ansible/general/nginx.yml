@@ -1,0 +1,30 @@
+---
+- hosts: general
+  tasks:
+    - name: "Check if {{ srv }} is installed"
+      package_facts:
+        manager: "auto"
+    - name: "{{ srv }} result"
+      debug:
+         msg: "{{ srv }} found"
+      when: "'nginx' in ansible_facts.packages"
+    - name: "{{ srv }} result"
+      debug:
+         msg: "{{ srv }} NOT found"
+      when: "'nginx' not in ansible_facts.packages"
+    - name: "Install {{ srv }}"
+      apt:
+        name: nginx
+        state: latest
+        update_cache: yes
+      when: "'nginx' not in ansible_facts.packages"
+    - name: "Write Echo"
+      shell: "echo 'Hello World' > /usr/share/nginx/html/index.html"
+      when: "'nginx' in ansible_facts.packages"
+    - name: "Remove {{ srv }}"
+      apt:
+        pkg: nginx
+        state: absent
+        autoremove: yes
+        purge: yes
+      when: "'nginx' in ansible_facts.packages"

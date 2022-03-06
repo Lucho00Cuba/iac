@@ -1,0 +1,7 @@
+[general]
+192.168.0.251 #ansible_user=root ansible_password=ansible102
+ 
+[general:vars]
+ansible_user=root
+ansible_password=$PASSWORD
+srv=nginx
